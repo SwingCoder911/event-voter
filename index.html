@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TAP Voter</title>
+		<meta name="viewport" content="width=device-width" />
+        <script type="text/javascript" src="scripts/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="scripts/angular.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css?cb=1" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/voter.css?cb=1">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js?cb=1" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="scripts/voter.js?cb=1"></script>
+	</head>
+	<body ng-app="VoterApp" ng-controller="VoterController as ctrl" class="voter-container" ng-cloak>
+		<header class="header">
+			<h1>Rose City Swing Murder Mystery</h1>
+		</header>
+		<section >
+			<ul class="contestant-list" ng-show="ctrl.Loaded && ctrl.ActiveContestants.length > 0 && !ctrl.AlreadyVoted">
+                <li class="contestant" ng-repeat="contestant in ctrl.ActiveContestants">
+					<button class="btn btn-default contestant-action" ng-click="ctrl.onVoteClicked($event, contestant)">
+						<label ng-bind="contestant.partnerA"></label>
+						<span>and</span>
+						<label ng-bind="contestant.partnerB"></label>
+					</button>
+                </li>
+			</ul>
+			<p class="voter-message" ng-show="ctrl.Loaded && !ctrl.AlreadyVoted && ctrl.ActiveContestants.length == 0">Contest is not ready yet. Refresh the page when it is!</p>	
+			<p class="voter-message" ng-show="ctrl.Loaded && ctrl.AlreadyVoted">Thank you for voting!</p>	
+		</section>
+		<div class="modal fade vote-modal">
+			<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h5 class="modal-title">Confirm Vote</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				</div>
+				<div class="modal-body">
+				<p>Are you sure you want to vote for <span ng-bind="ctrl.VotedContestant.partnerA + ' and ' + ctrl.VotedContestant.partnerB"></span>?</p>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-primary" ng-click="ctrl.onVoteConfirmClicked($event)">Cast Vote</button>
+				<button type="button" class="btn btn-secondary" ng-click="ctrl.onVoteCancelClicked($event)">Cancel</button>
+				</div>
+			</div>
+			</div>
+		</div>
+	</body>
+</html>

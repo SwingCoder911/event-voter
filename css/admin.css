@@ -1,0 +1,70 @@
+body, ul, p {
+  margin: 0;
+  padding: 0; }
+
+body {
+  width: 100vw;
+  min-height: 100vh; }
+
+ul {
+  list-style-type: none; }
+
+header {
+  overflow: hidden; }
+
+/* Modal Overrides */
+.modal .modal-title {
+  float: left; }
+
+.admin-container {
+  position: relative; }
+  .admin-container .header {
+    text-align: center; }
+  .admin-container .contestant-list {
+    text-align: center;
+    min-width: 15rem;
+    width: 80%;
+    margin: 0 auto;
+    padding-bottom: 8rem; }
+    .admin-container .contestant-list .contestant {
+      min-width: 20rem;
+      cursor: pointer;
+      position: relative; }
+      .admin-container .contestant-list .contestant .contestant-actions {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0; }
+        .admin-container .contestant-list .contestant .contestant-actions .btn-action {
+          height: 100%;
+          background: transparent;
+          border: none;
+          color: #337ab7; }
+      .admin-container .contestant-list .contestant.active .btn-action {
+        color: #FFF; }
+  .admin-container .contest-action {
+    position: absolute;
+    bottom: 2rem;
+    left: 5rem;
+    border-radius: 100px;
+    height: 50px;
+    text-align: center; }
+    .admin-container .contest-action:not(.btn-default) {
+      border-color: transparent; }
+  .admin-container .contestant-action {
+    position: absolute;
+    bottom: 2rem;
+    right: 5rem;
+    border-radius: 100px;
+    border-color: transparent;
+    width: 50px;
+    height: 50px;
+    text-align: center; }
+
+.modal .form-control {
+  margin: 1rem 0; }
+
+.form-error {
+  margin: 1rem 0; }
+
+/*# sourceMappingURL=admin.css.map */

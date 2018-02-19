@@ -1,0 +1,24 @@
+body, ul, p{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    width: 100vw;
+    min-height: 100vh;
+}
+
+ul{
+    list-style-type: none;
+}
+
+header{
+    overflow: hidden;
+}
+
+/* Modal Overrides */
+.modal{
+    .modal-title{
+        float: left;
+    }
+}

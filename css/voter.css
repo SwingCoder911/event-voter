@@ -1,0 +1,47 @@
+body, ul, p {
+  margin: 0;
+  padding: 0; }
+
+body {
+  width: 100vw;
+  min-height: 100vh; }
+
+ul {
+  list-style-type: none; }
+
+header {
+  overflow: hidden; }
+
+/* Modal Overrides */
+.modal .modal-title {
+  float: left; }
+
+.voter-container {
+  position: relative; }
+  .voter-container .header {
+    text-align: center; }
+  .voter-container .contestant-list {
+    text-align: center;
+    min-width: 15rem;
+    width: 80%;
+    margin: 0 auto; }
+    .voter-container .contestant-list .contestant {
+      min-width: 20rem;
+      cursor: pointer;
+      position: relative;
+      margin: 1rem 0; }
+      .voter-container .contestant-list .contestant .contestant-action {
+        width: 100%; }
+      .voter-container .contestant-list .contestant.active .btn-action {
+        color: #FFF; }
+  .voter-container .voter-message {
+    width: 100%;
+    text-align: center; }
+
+.modal .form-control {
+  margin: 1rem 0; }
+
+.form-error {
+  margin: 1rem 0; }
+
+/*# sourceMappingURL=voter.css.map */

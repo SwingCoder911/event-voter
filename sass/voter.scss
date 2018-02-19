@@ -1,0 +1,43 @@
+@import "base";
+
+.voter-container{
+    position: relative;
+    .header{
+        text-align: center;
+    }
+    .contestant-list{
+        text-align: center;
+        min-width: 15rem;
+        width: 80%;
+        margin: 0 auto;
+
+        .contestant{
+            min-width: 20rem;
+            cursor: pointer;
+            position: relative;
+            margin: 1rem 0;
+
+            .contestant-action{
+                width: 100%;
+            }
+            &.active{
+                .btn-action{
+                    color: #FFF;
+                }
+            }
+        }
+    }
+    .voter-message{
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.modal{
+    .form-control{
+        margin: 1rem 0;    
+    }    
+}
+.form-error{
+    margin: 1rem 0;
+}

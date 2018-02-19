@@ -1,0 +1,72 @@
+@import "base";
+
+.admin-container{
+    position: relative;
+    .header{
+        text-align: center;
+    }
+    .contestant-list{
+        text-align: center;
+        min-width: 15rem;
+        width: 80%;
+        margin: 0 auto;
+        padding-bottom: 8rem;
+
+        .contestant{
+            min-width: 20rem;
+            cursor: pointer;
+            position: relative;
+
+            .contestant-actions{
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                .btn-action{
+                    height: 100%;
+                    background: transparent;
+                    border: none;
+                    color: #337ab7;
+
+                }
+            }
+
+            &.active{
+                .btn-action{
+                    color: #FFF;
+                }
+            }
+        }
+    }
+    .contest-action{
+        position: absolute;
+        bottom: 2rem;
+        left: 5rem;
+        border-radius: 100px;        
+        height: 50px;
+        text-align: center;
+
+        &:not(.btn-default){
+            border-color: transparent;
+        }
+    }
+    .contestant-action{
+        position: absolute;
+        bottom: 2rem;
+        right: 5rem;
+        border-radius: 100px;
+        border-color: transparent;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+    }
+}
+
+.modal{
+    .form-control{
+        margin: 1rem 0;    
+    }    
+}
+.form-error{
+    margin: 1rem 0;
+}
