@@ -1,6 +1,6 @@
 <?php
 require_once("config.php");
-require_once("contestant.php");
+require_once("suspect.php");
 date_default_timezone_set ('America/Los_Angeles');
 class VoterDB{
 	public $servername = SERVERNAME;
@@ -21,87 +21,54 @@ class VoterDB{
 	 * Get all pieces
 	 * 
 	 */
-	public function getContestants(){
-		$sql = "SELECT * FROM bracket_voter where archived=0;";
-		$contestants = array();
+	public function getSuspects(){
+		$sql = "SELECT * FROM event_suspects;";
+		$suspects = array();
 		$result = $this->conn->query($sql);
 		if ($result->num_rows > 0) {
 		    // output data of each row
 		    while($row = $result->fetch_assoc()) {
-		    	array_push($contestants, new Contestant($row));
+		    	array_push($suspects, new Suspect($row));
 		    }
 		} 
-		return $contestants;	
+		return $suspects;	
 	}
-
-	/**
-	 * Get all pieces
-	 * 
-	 */
-	public function getActiveContestants(){
-		$sql = "SELECT * FROM bracket_voter where active=1 and archived=0;";
-		$contestants = array();
-		$result = $this->conn->query($sql);
-		if ($result->num_rows > 0) {
-		    // output data of each row
-		    while($row = $result->fetch_assoc()) {
-		    	array_push($contestants, new Contestant($row));
-		    }
-		} 
-		return $contestants;	
-	}
-	/**
-	 * Get all pieces
-	 * 
-	 */
-	public function getAvailableContestants(){
-		$sql = "SELECT * FROM bracket_voter where archived=0;";
-		$contestants = array();
-		$result = $this->conn->query($sql);
-		if ($result->num_rows > 0) {
-		    // output data of each row
-		    while($row = $result->fetch_assoc()) {
-		    	array_push($contestants, new Contestant($row));
-		    }
-		} 
-		return $contestants;	
-	}
-	public function createContestant($partnerA, $partnerB){
-		$sql = "insert into bracket_voter (partner_a, partner_b, votes, active, archived) values ('%s', '%s', 0, 0, 0);";
-		$sql = vsprintf($sql, array($partnerA, $partnerB));
+	public function createSuspect($name, $isCulprit){
+		$sql = "insert into event_suspects (name, is_culprit) values ('%s', %d);";
+		$sql = vsprintf($sql, array($name, $isCulprit));
 		$result = $this->conn->query($sql);
 	}
 	
-	public function updateContestant($coupleId, $partnerA, $partnerB){
-		$sql = "update bracket_voter set partner_a='%s', partner_b='%s' where couple_id=%d;";
-		$sql = vsprintf($sql, array($partnerA, $partnerB, $coupleId));
+	/**
+	 * Need to check here if updating culprit
+	 */
+	public function updateSuspect($suspectId, $name, $isCulprit){
+		$sql = "update event_suspects set name='%s', is_culprit=%d where suspect_id=%d;";
+		$sql = vsprintf($sql, array($name, $isCulprit, $suspectId));
 		$result = $this->conn->query($sql);
 	}
 
-	public function archiveContestant($coupleId){
-		$sql = "update bracket_voter set archived=1 where couple_id=%d;";
-		$sql = vsprintf($sql, array($coupleId));
-		$result = $this->conn->query($sql);
-	}
-
-	public function setActiveContest($contestants){
+	public function setActiveContest($suspects){
 		$sql = "update bracket_voter set active=1 where couple_id in (%s);";
-		$sql = vsprintf($sql, array(implode(",", $contestants)));
+		$sql = vsprintf($sql, array(implode(",", $suspects)));
 		$result = $this->conn->query($sql);
 		$stampSql = "update bracket_session set stamp='%s' where session_id=1;";
 		$stampSql = vsprintf($stampSql, array(time()));
 		$result = $this->conn->query($stampSql);
 	}
 
-	public function castVote($coupleId){
+	public function castVote($name, $suspectId){
 		$sql = "update bracket_voter set votes=votes+1 where couple_id=%d;";
-		$sql = vsprintf($sql, array($coupleId));
+		$sql = vsprintf($sql, array($suspectId));
 		$result = $this->conn->query($sql);
 		$stampSql = "SELECT * FROM bracket_session where session_id=1;";
 		$result = $this->conn->query($stampSql);
 		$row = $result->fetch_assoc();
 		return $row['stamp'];	
 	}
+	/**
+	 * TODO: Figure out a way to turn contest on/off
+	 */
 	public function getStamp(){
 		$stampSql = "SELECT * FROM bracket_session where session_id=1;";
 		$result = $this->conn->query($stampSql);
@@ -117,7 +84,7 @@ class VoterDB{
 		if ($result->num_rows > 0) {
 		    // output data of each row
 		    while($row = $result->fetch_assoc()) {
-				$currWinner = new Contestant($row);
+				$currWinner = new Suspect($row);
 				if(count($winners) == 0 || $currWinner->votes == $winners[0]->votes){
 					array_push($winners, $currWinner);
 				}else{
@@ -130,7 +97,7 @@ class VoterDB{
 		$archiveSql = "update bracket_voter set archived=1, active=0 where active=1 and couple_id in (%s);";
 		$archiveSql = vsprintf($archiveSql, array(implode(",", $losers)));
 		$result = $this->conn->query($archiveSql);
-		//Set all contestants to inactive
+		//Set all suspects to inactive
 		$activeSql = "update bracket_voter set active=0, votes=0 where active=1;";
 		$result = $this->conn->query($activeSql);
 		//Return winners

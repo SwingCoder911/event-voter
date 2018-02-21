@@ -20,27 +20,27 @@ header {
   position: relative; }
   .admin-container .header {
     text-align: center; }
-  .admin-container .contestant-list {
+  .admin-container .suspect-list {
     text-align: center;
     min-width: 15rem;
     width: 80%;
     margin: 0 auto;
     padding-bottom: 8rem; }
-    .admin-container .contestant-list .contestant {
+    .admin-container .suspect-list .suspect {
       min-width: 20rem;
       cursor: pointer;
       position: relative; }
-      .admin-container .contestant-list .contestant .contestant-actions {
+      .admin-container .suspect-list .suspect .suspect-actions {
         position: absolute;
         right: 0;
         top: 0;
         bottom: 0; }
-        .admin-container .contestant-list .contestant .contestant-actions .btn-action {
+        .admin-container .suspect-list .suspect .suspect-actions .btn-action {
           height: 100%;
           background: transparent;
           border: none;
           color: #337ab7; }
-      .admin-container .contestant-list .contestant.active .btn-action {
+      .admin-container .suspect-list .suspect.active .btn-action {
         color: #FFF; }
   .admin-container .contest-action {
     position: absolute;
@@ -51,7 +51,7 @@ header {
     text-align: center; }
     .admin-container .contest-action:not(.btn-default) {
       border-color: transparent; }
-  .admin-container .contestant-action {
+  .admin-container .suspect-action {
     position: absolute;
     bottom: 2rem;
     right: 5rem;

@@ -20,19 +20,19 @@ header {
   position: relative; }
   .voter-container .header {
     text-align: center; }
-  .voter-container .contestant-list {
+  .voter-container .suspect-list {
     text-align: center;
     min-width: 15rem;
     width: 80%;
     margin: 0 auto; }
-    .voter-container .contestant-list .contestant {
+    .voter-container .suspect-list .suspect {
       min-width: 20rem;
       cursor: pointer;
       position: relative;
       margin: 1rem 0; }
-      .voter-container .contestant-list .contestant .contestant-action {
+      .voter-container .suspect-list .suspect .suspect-action {
         width: 100%; }
-      .voter-container .contestant-list .contestant.active .btn-action {
+      .voter-container .suspect-list .suspect.active .btn-action {
         color: #FFF; }
   .voter-container .voter-message {
     width: 100%;

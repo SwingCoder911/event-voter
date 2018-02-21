@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>TAP Voter</title>
+		<title>RCS Murder Mystery</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript" src="scripts/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="scripts/angular.min.js"></script>
@@ -15,40 +15,37 @@
 			<h1>Rose City Swing Murder Mystery</h1>
 		</header>
 		<section class="voter-container">
-			<ul class="list-group contestant-list">
-          <li class="list-group-item contestant {{(ctrl.SelectedContestants.indexOf(contestant.id) !== -1) ? 'active' : ''}}" ng-repeat="contestant in ctrl.AvailableContestants" ng-click="ctrl.onContestantToggled($event, contestant.id)" ng-hide="contestant.active==1">
-            <label ng-bind="contestant.partnerA"></label>
-            <span>and</span>
-            <label ng-bind="contestant.partnerB"></label>
-            <div class="contestant-actions">
-              <button class="btn-action" ng-click="ctrl.onEditClicked($event, contestant)"><span class="glyphicon glyphicon-pencil"></span></button>  
-              <button class="btn-action" ng-click="ctrl.onDeleteClicked($event, contestant.id)"><span class="glyphicon glyphicon-trash"></span></button>                
+			<ul class="list-group suspect-list">
+          <li class="list-group-item suspect" ng-repeat="suspect in ctrl.AvailableSuspects">
+            <label ng-bind="suspect.name"></label>
+            <div class="suspect-actions">
+              <button class="btn-action" ng-click="ctrl.onEditClicked($event, suspect)"><span class="glyphicon glyphicon-pencil"></span></button>  
+              <button class="btn-action" ng-click="ctrl.onDeleteClicked($event, suspect.id)"><span class="glyphicon glyphicon-trash"></span></button>                
             </div>            
           </li>
       </ul>
     </section>
-    <button class="btn {{(ctrl.SelectedContestants.length > 1) ? 'btn-success' : 'btn-default'}} contest-action" ng-click="ctrl.onStartClicked($event)" ng-show="ctrl.ContestMode === false">
+    <button class="btn {{(ctrl.SelectedSuspects.length > 1) ? 'btn-success' : 'btn-default'}} contest-action" ng-click="ctrl.onStartClicked($event)" ng-show="ctrl.ContestMode === false">
         Start!
     </button>
     <button class="btn btn-warning contest-action" ng-click="ctrl.onStopClicked($event)" ng-show="ctrl.ContestMode === true">
         Stop
     </button>
-    <button class="btn btn-primary contestant-action" ng-click="ctrl.onCreateClicked($event)">
+    <button class="btn btn-primary suspect-action" ng-click="ctrl.onCreateClicked($event)">
       <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
     </button>
 		<div class="modal fade create-modal">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a Contestant</h5>
+            <h5 class="modal-title">Add a Suspect</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <input class="form-control" ng-model="ctrl.ContestantForm.PartnerA" placeholder="Partner A">
-            <input class="form-control" ng-model="ctrl.ContestantForm.PartnerB" placeholder="Partner B">                  
-            <span class="form-error" ng-bind="ctrl.ContestantForm.Message" ng-show="this.ContestantForm.Message.length != ''"></span>
+            <input class="form-control" ng-model="ctrl.SuspectForm.Suspect" placeholder="Suspect Name">
+            <span class="form-error" ng-bind="ctrl.SuspectForm.Message" ng-show="this.SuspectForm.Message.length != ''"></span>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" ng-click="ctrl.onCreateConfirmClicked($event)">Create</button>
@@ -61,15 +58,14 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Edit Contestant</h5>
+              <h5 class="modal-title">Edit Suspect</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <input class="form-control" ng-model="ctrl.ContestantForm.PartnerA" placeholder="Partner A">
-              <input class="form-control" ng-model="ctrl.ContestantForm.PartnerB" placeholder="Partner B">                  
-              <span class="form-error" ng-bind="ctrl.ContestantForm.Message" ng-show="this.ContestantForm.Message.length != ''"></span>
+              <input class="form-control" ng-model="ctrl.SuspectForm.Suspect" placeholder="Suspect Name">
+              <span class="form-error" ng-bind="ctrl.SuspectForm.Message" ng-show="this.SuspectForm.Message.length != ''"></span>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" ng-click="ctrl.onEditConfirmClicked($event)">Update</button>
@@ -82,13 +78,13 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Delete Contestant Confirmation</h5>
+              <h5 class="modal-title">Delete Suspect Confirmation</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <p>Are you sure you want to delete this contestant?</p>
+              <p>Are you sure you want to delete this suspect?</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" ng-click="ctrl.onDeleteConfirmClicked($event)">Delete</button>
@@ -107,7 +103,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <p>Are you sure you want to start the contest?</p>
+              <p>Are you sure you want to start the mystery?</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" ng-click="ctrl.onStartConfirmClicked($event)">Start</button>
@@ -126,7 +122,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <p>Are you sure you want to stop this contest?</p>
+              <p>Are you sure you want to stop this mystery?</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" ng-click="ctrl.onStopConfirmClicked($event)">Stop</button>

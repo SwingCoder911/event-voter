@@ -5,19 +5,19 @@
     .header{
         text-align: center;
     }
-    .contestant-list{
+    .suspect-list{
         text-align: center;
         min-width: 15rem;
         width: 80%;
         margin: 0 auto;
         padding-bottom: 8rem;
 
-        .contestant{
+        .suspect{
             min-width: 20rem;
             cursor: pointer;
             position: relative;
 
-            .contestant-actions{
+            .suspect-actions{
                 position: absolute;
                 right: 0;
                 top: 0;
@@ -50,7 +50,7 @@
             border-color: transparent;
         }
     }
-    .contestant-action{
+    .suspect-action{
         position: absolute;
         bottom: 2rem;
         right: 5rem;

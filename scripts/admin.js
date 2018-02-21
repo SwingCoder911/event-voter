@@ -1,13 +1,11 @@
 let app = angular.module('VoterApp', []);
 app.controller('AdminController', ['$scope', '$http', function($scope, $http){
-    this.AvailableContestants = [];
+    this.AvailableSuspects = [];
     this.Winners = [];
-    this.SelectedContestants = [];
+    this.SelectedSuspects = [];
     this.ContestMode = null;
-    this.CurrentContestant = null;
-    this.ContestantForm = {
-        PartnerA: "",
-        PartnerB: "",
+    this.SuspectForm = {
+        Suspect: "",
         Message: ""
     };
     /**
@@ -17,16 +15,16 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         $(".create-modal").modal('toggle');
     };
     this.onCreateConfirmClicked = ($event) => {
-        if(this.ContestantForm.PartnerA.length == 0 || this.ContestantForm.PartnerB.length == 0){
+        if(this.SuspectForm.Suspect.length == 0){
             console.log("Bad form!");
-            this.ContestantForm.Message = "Fill out both fields!";
+            this.SuspectForm.Message = "Fill out the field!";
             return;
         }else{
-            this.ContestantForm.Message = "";
+            this.SuspectForm.Message = "";
         }
-        this.CreateContestant()
+        this.CreateSuspect()
             .then(() => {
-                this.ClearContestantForm();
+                this.ClearSuspectForm();
                 $(".create-modal").modal('hide');
             })
             .catch(() => {
@@ -36,32 +34,32 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.onCreateCancelClicked = ($event) => {
         $(".create-modal").modal('hide');
-        this.ClearContestantForm();
+        this.ClearSuspectForm();
     };
-    this.onContestantToggled = ($event, id) => {
-        if(this.SelectedContestants.indexOf(id) !== -1){
-            this.SelectedContestants.splice(this.SelectedContestants.indexOf(id), 1);
+    this.onSuspectToggled = ($event, id) => {
+        if(this.SelectedSuspects.indexOf(id) !== -1){
+            this.SelectedSuspects.splice(this.SelectedSuspects.indexOf(id), 1);
         }else{
-            this.SelectedContestants.push(id);
+            this.SelectedSuspects.push(id);
         }        
     };
-    this.onEditClicked = ($event, contestant) => {
+    this.onEditClicked = ($event, suspect) => {
         $event.stopPropagation();
         $(".edit-modal").modal('show');
-        this.CurrentContestant = contestant.id;
-        this.ContestantForm.PartnerA = contestant.partnerA;
-        this.ContestantForm.PartnerB = contestant.partnerB;
+        this.CurrentSuspect = suspect.id;
+        this.SuspectForm.PartnerA = suspect.partnerA;
+        this.SuspectForm.PartnerB = suspect.partnerB;
         console.log("Editing");
     };
     this.onEditConfirmClicked = ($event) => {
-        if(this.ContestantForm.PartnerA.length == 0 || this.ContestantForm.PartnerB.length == 0){
+        if(this.SuspectForm.PartnerA.length == 0 || this.SuspectForm.PartnerB.length == 0){
             console.log("Bad form!");
-            this.ContestantForm.Message = "Fill out both fields!";
+            this.SuspectForm.Message = "Fill out both fields!";
             return;
         }else{
-            this.ContestantForm.Message = "";
+            this.SuspectForm.Message = "";
         }
-        this.EditContestant()
+        this.EditSuspect()
             .then(() => {
                 $(".edit-modal").modal('hide');
             })
@@ -72,18 +70,18 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.onEditCancelClicked = ($event) => {
         $(".edit-modal").modal('hide');
-        this.ClearContestantForm();
-        this.CurrentContestant = null;
+        this.ClearSuspectForm();
+        this.CurrentSuspect = null;
     };
     this.onDeleteClicked = ($event, id) => {
         console.log("Deleting");
         $event.stopPropagation();
         $('.delete-modal').modal('show');
-        this.CurrentContestant = id;
+        this.CurrentSuspect = id;
     };
     this.onDeleteConfirmClicked = ($event, id) => {
         $('.delete-modal').modal('show');
-        this.DeleteContestant()
+        this.DeleteSuspect()
             .then(() => {
                 $(".delete-modal").modal('hide');
             })
@@ -93,11 +91,11 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.onDeleteCancelClicked = ($event, id) => {
         $('.delete-modal').modal('hide');
-        this.CurrentContestant = null;
+        this.CurrentSuspect = null;
     };
-    this.onStartClicked = ($event, contestant) => {
+    this.onStartClicked = ($event, suspect) => {
         $event.stopPropagation();
-        if(this.SelectedContestants.length < 2){
+        if(this.SelectedSuspects.length < 2){
             return;
         }
         $(".start-modal").modal('show');
@@ -116,13 +114,13 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     this.onStartCancelClicked = ($event) => {
         $(".start-modal").modal('hide');
     };
-    this.onStopClicked = ($event, contestant) => {
+    this.onStopClicked = ($event, suspect) => {
         $event.stopPropagation();
         $(".stop-modal").modal('show');
     };
     this.onStopConfirmClicked = ($event) => {
-        this.StopContestant()
-            .then((winningContestants) => {
+        this.StopContest()
+            .then((winningSuspects) => {
                 $(".stop-modal").modal('hide');
                 $(".winner-modal").modal('show');
             })
@@ -141,16 +139,16 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     /**
      * App Methods
      */
-    this.ClearContestantForm = () => {
-        this.ContestantForm.PartnerA = "";
-        this.ContestantForm.PartnerB = "";
+    this.ClearSuspectForm = () => {
+        this.SuspectForm.PartnerA = "";
+        this.SuspectForm.PartnerB = "";
     };
-    this.CreateContestant = () => {
+    this.CreateSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/createcontestant.php?partner_a=${this.ContestantForm.PartnerA}&partner_b=${this.ContestantForm.PartnerB}`)
+            $http.get(`api/createsuspect.php?partner_a=${this.SuspectForm.PartnerA}&partner_b=${this.SuspectForm.PartnerB}`)
                 .then((result) => {
                     console.log("Finished! ", result);
-                    this.LoadAvailableContestants(); 
+                    this.LoadAvailableSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -160,12 +158,12 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });        
     };
-    this.EditContestant = () => {
+    this.EditSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/updatecontestant.php?couple_id=${this.CurrentContestant}&partner_a=${this.ContestantForm.PartnerA}&partner_b=${this.ContestantForm.PartnerB}`)
+            $http.get(`api/updatesuspect.php?couple_id=${this.CurrentSuspect}&partner_a=${this.SuspectForm.PartnerA}&partner_b=${this.SuspectForm.PartnerB}`)
                 .then((result) => {
                     console.log("Finished! ", result);
-                    this.LoadAvailableContestants(); 
+                    this.LoadAvailableSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -175,11 +173,11 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });        
     };
-    this.DeleteContestant = () => {
+    this.DeleteSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/archivecontestant.php?couple_id=${this.CurrentContestant}`)
+            $http.get(`api/archivesuspect.php?couple_id=${this.CurrentSuspect}`)
                 .then((result) => {
-                    this.LoadAvailableContestants(); 
+                    this.LoadAvailableSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -191,9 +189,9 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.StartContest = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/setactivecontest.php?contestants=${this.SelectedContestants.join(',')}`)
+            $http.get(`api/setactivecontest.php?suspects=${this.SelectedSuspects.join(',')}`)
                 .then((result) => {
-                    this.LoadAvailableContestants(); 
+                    this.LoadAvailableSuspects(); 
                     this.ContestMode = true;
                     resolve(result);
                 },
@@ -204,11 +202,11 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });   
     };
-    this.StopContestant = () => {
+    this.StopContest = () => {
         return new Promise((resolve, reject) => {
             $http.get(`api/closeactivecontest.php`)
                 .then((result) => {
-                    this.LoadAvailableContestants(); 
+                    this.LoadAvailableSuspects(); 
                     this.Winners = result.data;
                     console.log(this.Winners);
                     this.ContestMode = false;
@@ -221,18 +219,18 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });   
     };
-    this.LoadAvailableContestants = () => {
-        $http.get(`api/getavailablecontestants.php`)
+    this.LoadAvailableSuspects = () => {
+        $http.get(`api/getavailablesuspects.php`)
             .then((results) => {               
                if(!results.hasOwnProperty('data')){
                    console.log("Error in data");
                    return;
                }
                console.log(results.data);
-               this.AvailableContestants = results.data;
+               this.AvailableSuspects = results.data;
                let running = false;
-               for(let i = 0, len = this.AvailableContestants.length; i < len; i++){
-                    if(this.AvailableContestants[i].active){
+               for(let i = 0, len = this.AvailableSuspects.length; i < len; i++){
+                    if(this.AvailableSuspects[i].active){
                         running = true;
                     }
                }
@@ -244,5 +242,5 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
             });
     };
 
-    this.LoadAvailableContestants();
+    this.LoadAvailableSuspects();
 }]);
