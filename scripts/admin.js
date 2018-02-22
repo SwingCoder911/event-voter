@@ -2,7 +2,9 @@ let app = angular.module('VoterApp', []);
 app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     this.Suspects = [];
     this.Winners = [];
+    this.Detectives = [];
     this.ContestMode = null;
+    this.ActiveTab = 'suspects';
     this.SuspectForm = {
         Suspect: "",
         IsCulprit: null,
@@ -11,6 +13,16 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     /**
      * Page events
      */
+    this.onTabClicked = (tab) => {
+        this.ActiveTab = tab;
+        if(tab === 'winners'){
+            this.LoadWinners();
+        }else if(tab == 'detectives'){
+            this.LoadDetectives();
+        }else{
+            this.LoadSuspects();
+        }
+    };
     this.onCreateClicked = ($event) => {
         $(".create-modal").modal('toggle');
     };
@@ -234,6 +246,35 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 console.log(error);
             });
     };
-
+    this.LoadDetectives = () => {
+        $http.get(`api/getdetectives.php`)
+            .then((results) => {               
+               if(!results.hasOwnProperty('data')){
+                   console.log("Error in data");
+                   return;
+               }
+               console.log(results.data);
+               this.Detectives = results.data;
+            },
+            (error) => {
+                //TODO: HANDLE ERROR
+                console.log(error);
+            });
+    };
+    this.LoadWinners = () => {
+        $http.get(`api/getwinners.php`)
+            .then((results) => {               
+               if(!results.hasOwnProperty('data')){
+                   console.log("Error in data");
+                   return;
+               }
+               console.log(results.data);
+               this.Winners = results.data;
+            },
+            (error) => {
+                //TODO: HANDLE ERROR
+                console.log(error);
+            });
+    };
     this.LoadSuspects();
 }]);

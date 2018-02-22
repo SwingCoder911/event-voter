@@ -36,7 +36,20 @@ class VoterDB{
 	}
 
 	public function getWinners(){
-		$sql = "SELECT * FROM event_detectives inner join event_suspects on event_detectives.suspect_id = event_suspects.suspect_id and event_suspects.is_culprit = 1;";
+		$sql = "SELECT event_detectives.* FROM event_detectives inner join event_suspects on event_detectives.suspect_id = event_suspects.suspect_id and event_suspects.is_culprit = 1;";
+		$suspects = array();
+		$result = $this->conn->query($sql);
+		if ($result->num_rows > 0) {
+		    // output data of each row
+		    while($row = $result->fetch_assoc()) {
+		    	array_push($suspects, new Detective($row));
+		    }
+		} 
+		return $suspects;	
+	}
+
+	public function getDetectives(){
+		$sql = "SELECT * FROM event_detectives;";
 		$suspects = array();
 		$result = $this->conn->query($sql);
 		if ($result->num_rows > 0) {

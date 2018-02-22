@@ -13,10 +13,31 @@
 	<body ng-app="VoterApp" ng-controller="AdminController as ctrl" class="admin-container">
 		<header class="header">
 			<h1>Rose City Swing Murder Mystery</h1>
-		</header>
+    </header>
+    <nav>
+      <ul>
+        <li ng-click="ctrl.onTabClicked('suspects')">Suspects</li>
+        <li ng-click="ctrl.onTabClicked('winners')">Winners</li>
+        <li ng-click="ctrl.onTabClicked('detectives')">Detectives</li>
+      </ul>
+    </nav>
 		<section class="voter-container">
-			<ul class="list-group suspect-list">
+			<ul class="list-group suspect-list" ng-show="ctrl.ActiveTab == 'suspects'" ng-cloak>
           <li class="list-group-item suspect {{suspect.isCulprit == 1 ? 'active' : ''}}" ng-repeat="suspect in ctrl.Suspects">
+            <label ng-bind="suspect.name"></label>
+            <div class="suspect-actions">
+              <button class="btn-action" ng-click="ctrl.onEditClicked($event, suspect)"><span class="glyphicon glyphicon-pencil"></span></button>  
+              <button class="btn-action" ng-click="ctrl.onDeleteClicked($event, suspect.id)"><span class="glyphicon glyphicon-trash"></span></button>                
+            </div>            
+          </li>
+      </ul>
+      <ul class="list-group suspect-list" ng-show="ctrl.ActiveTab == 'winners'" ng-cloak>
+          <li class="list-group-item suspect" ng-repeat="suspect in ctrl.Winners">
+            <label ng-bind="suspect.name"></label>          
+          </li>
+      </ul>
+      <ul class="list-group suspect-list" ng-show="ctrl.ActiveTab == 'detectives'" ng-cloak>
+          <li class="list-group-item suspect {{suspect.isCulprit == 1 ? 'active' : ''}}" ng-repeat="suspect in ctrl.Detectives">
             <label ng-bind="suspect.name"></label>
             <div class="suspect-actions">
               <button class="btn-action" ng-click="ctrl.onEditClicked($event, suspect)"><span class="glyphicon glyphicon-pencil"></span></button>  
