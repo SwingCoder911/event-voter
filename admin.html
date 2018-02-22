@@ -16,7 +16,7 @@
 		</header>
 		<section class="voter-container">
 			<ul class="list-group suspect-list">
-          <li class="list-group-item suspect" ng-repeat="suspect in ctrl.AvailableSuspects">
+          <li class="list-group-item suspect {{suspect.isCulprit == 1 ? 'active' : ''}}" ng-repeat="suspect in ctrl.Suspects">
             <label ng-bind="suspect.name"></label>
             <div class="suspect-actions">
               <button class="btn-action" ng-click="ctrl.onEditClicked($event, suspect)"><span class="glyphicon glyphicon-pencil"></span></button>  
@@ -44,7 +44,10 @@
             </button>
           </div>
           <div class="modal-body">
-            <input class="form-control" ng-model="ctrl.SuspectForm.Suspect" placeholder="Suspect Name">
+            <input class="form-control" ng-model="ctrl.SuspectForm.Name" placeholder="Suspect Name">
+            <div class="checkbox">
+              <label><input type="checkbox" ng-model="ctrl.SuspectForm.IsCulprit" ng-true-value="1" ng-false-value="0">Is Culprit</label>  
+            </div>
             <span class="form-error" ng-bind="ctrl.SuspectForm.Message" ng-show="this.SuspectForm.Message.length != ''"></span>
           </div>
           <div class="modal-footer">
@@ -64,7 +67,10 @@
               </button>
             </div>
             <div class="modal-body">
-              <input class="form-control" ng-model="ctrl.SuspectForm.Suspect" placeholder="Suspect Name">
+              <input class="form-control" ng-model="ctrl.SuspectForm.Name" placeholder="Suspect Name">
+              <div class="checkbox">
+                <label><input type="checkbox" ng-model="ctrl.SuspectForm.IsCulprit" ng-true-value="1" ng-false-value="0">Is Culprit</label>  
+              </div>
               <span class="form-error" ng-bind="ctrl.SuspectForm.Message" ng-show="this.SuspectForm.Message.length != ''"></span>
             </div>
             <div class="modal-footer">

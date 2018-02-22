@@ -4,21 +4,21 @@
  */
 
 include "classes/db.php";
-if(!array_key_exists('couple_id', $_GET)){
-    echo("Missing couple id");
+if(!array_key_exists('suspect_id', $_GET)){
+    echo("Missing suspect id");
     return;
 }
-if(!array_key_exists('partner_a', $_GET)){
-    echo("Missing partner A");
+if(!array_key_exists('name', $_GET)){
+    echo("Missing suspect name");
     return;
 }
-if(!array_key_exists('partner_b', $_GET)){
-    echo("Missing partner B");
+if(!array_key_exists('is_culprit', $_GET)){
+    echo("Is this culprit a suspect?");
     return;
 }
-$partnerA = $_GET['partner_a'];
-$partnerB = $_GET['partner_b'];
-$coupleId = $_GET['couple_id'];
+$suspectId = $_GET['suspect_id'];
+$name = $_GET['name'];
+$isCulprit = $_GET['is_culprit'];
 $db = new VoterDB();
-$db->updateContestant($coupleId, $partnerA, $partnerB);
+$db->updateSuspect($suspectId, $name, $isCulprit);
 echo(true);

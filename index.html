@@ -15,27 +15,28 @@
 			<h1>Rose City Swing Murder Mystery</h1>
 		</header>
 		<section >
-			<ul class="suspect-list" ng-show="ctrl.Loaded && ctrl.ActiveSuspects.length > 0 && !ctrl.AlreadyVoted">
-                <li class="suspect" ng-repeat="suspect in ctrl.ActiveSuspects">
+			<ul class="suspect-list" ng-show="ctrl.Loaded && !ctrl.AlreadyVoted && ctrl.Suspects.length > 0">
+                <li class="suspect" ng-repeat="suspect in ctrl.Suspects">
 					<button class="btn btn-default suspect-action" ng-click="ctrl.onVoteClicked($event, suspect)">
 						<label ng-bind="suspect.name"></label>
 					</button>
                 </li>
 			</ul>
-			<p class="voter-message" ng-show="ctrl.Loaded && !ctrl.AlreadyVoted && ctrl.ActiveSuspects.length == 0">Contest is not ready yet. Refresh the page when it is!</p>	
-			<p class="voter-message" ng-show="ctrl.Loaded && ctrl.AlreadyVoted">Thank you for voting!</p>	
+			<p class="voter-message" ng-show="ctrl.Loaded && !ctrl.AlreadyVoted && ctrl.Suspects.length == 0">Contest is not ready yet. Refresh the page when it is!</p>	
+			<p class="voter-message" ng-show="ctrl.Loaded && ctrl.AlreadyVoted">Thank you for guessing!</p>	
 		</section>
 		<div class="modal fade vote-modal">
 			<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-				<h5 class="modal-title">Confirm Vote</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
+					<h5 class="modal-title">Confirm Vote</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
 				</div>
 				<div class="modal-body">
-				<p>Are you sure you want to vote for <span ng-bind="ctrl.VotedSuspect.Suspect"></span>?</p>
+				<p>To guess <label ng-bind="ctrl.VotedSuspect.name"></label> please include your first and last name.</p>
+				<input class="form-control" ng-model="ctrl.Detective.Name" placeholder="Detective Name">
 				</div>
 				<div class="modal-footer">
 				<button type="button" class="btn btn-primary" ng-click="ctrl.onVoteConfirmClicked($event)">Cast Vote</button>

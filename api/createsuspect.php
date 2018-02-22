@@ -4,16 +4,16 @@
  */
 
 include "classes/db.php";
-if(!array_key_exists('partner_a', $_GET)){
-    echo("Missing partner A");
+if(!array_key_exists('name', $_GET)){
+    echo("Missing suspect name");
     return;
 }
-if(!array_key_exists('partner_b', $_GET)){
-    echo("Missing partner B");
+if(!array_key_exists('is_culprit', $_GET)){
+    echo("Is this suspect the culprit?");
     return;
 }
-$partnerA = $_GET['partner_a'];
-$partnerB = $_GET['partner_b'];
+$name = $_GET['name'];
+$isCulprit = $_GET['is_culprit'];
 $db = new VoterDB();
-$db->createContestant($partnerA, $partnerB);
+$db->createSuspect($name, $isCulprit);
 echo(true);

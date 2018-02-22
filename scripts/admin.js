@@ -1,11 +1,11 @@
 let app = angular.module('VoterApp', []);
 app.controller('AdminController', ['$scope', '$http', function($scope, $http){
-    this.AvailableSuspects = [];
+    this.Suspects = [];
     this.Winners = [];
-    this.SelectedSuspects = [];
     this.ContestMode = null;
     this.SuspectForm = {
         Suspect: "",
+        IsCulprit: null,
         Message: ""
     };
     /**
@@ -15,7 +15,7 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         $(".create-modal").modal('toggle');
     };
     this.onCreateConfirmClicked = ($event) => {
-        if(this.SuspectForm.Suspect.length == 0){
+        if(this.SuspectForm.Name.length == 0){
             console.log("Bad form!");
             this.SuspectForm.Message = "Fill out the field!";
             return;
@@ -43,18 +43,18 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
             this.SelectedSuspects.push(id);
         }        
     };
-    this.onEditClicked = ($event, suspect) => {
+    this.onEditClicked = ($event, suspect) => {        
         $event.stopPropagation();
         $(".edit-modal").modal('show');
         this.CurrentSuspect = suspect.id;
-        this.SuspectForm.PartnerA = suspect.partnerA;
-        this.SuspectForm.PartnerB = suspect.partnerB;
+        this.SuspectForm.Name = suspect.name;
+        this.SuspectForm.IsCulprit = parseInt(suspect.isCulprit);
         console.log("Editing");
     };
     this.onEditConfirmClicked = ($event) => {
-        if(this.SuspectForm.PartnerA.length == 0 || this.SuspectForm.PartnerB.length == 0){
+        if(this.SuspectForm.Name.length == 0){
             console.log("Bad form!");
-            this.SuspectForm.Message = "Fill out both fields!";
+            this.SuspectForm.Message = "Fill out name!";
             return;
         }else{
             this.SuspectForm.Message = "";
@@ -65,8 +65,7 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
             })
             .catch(() => {
                 console.log("Something broke!");
-            });
-        
+            });        
     };
     this.onEditCancelClicked = ($event) => {
         $(".edit-modal").modal('hide');
@@ -140,15 +139,15 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
      * App Methods
      */
     this.ClearSuspectForm = () => {
-        this.SuspectForm.PartnerA = "";
-        this.SuspectForm.PartnerB = "";
+        this.SuspectForm.Name = "";
+        this.SuspectForm.IsCulprit = null;
     };
     this.CreateSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/createsuspect.php?partner_a=${this.SuspectForm.PartnerA}&partner_b=${this.SuspectForm.PartnerB}`)
+            $http.get(`api/createsuspect.php?name=${this.SuspectForm.Name}&is_culprit=${this.SuspectForm.IsCulprit}`)
                 .then((result) => {
                     console.log("Finished! ", result);
-                    this.LoadAvailableSuspects(); 
+                    this.LoadSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -160,10 +159,11 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.EditSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/updatesuspect.php?couple_id=${this.CurrentSuspect}&partner_a=${this.SuspectForm.PartnerA}&partner_b=${this.SuspectForm.PartnerB}`)
+            console.log(this.SuspectForm);
+            $http.get(`api/updatesuspect.php?suspect_id=${this.CurrentSuspect}&name=${this.SuspectForm.Name}&is_culprit=${this.SuspectForm.IsCulprit}`)
                 .then((result) => {
                     console.log("Finished! ", result);
-                    this.LoadAvailableSuspects(); 
+                    this.LoadSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -175,9 +175,9 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     };
     this.DeleteSuspect = () => {
         return new Promise((resolve, reject) => {
-            $http.get(`api/archivesuspect.php?couple_id=${this.CurrentSuspect}`)
+            $http.get(`api/deletesuspect.php?suspect_id=${this.CurrentSuspect}`)
                 .then((result) => {
-                    this.LoadAvailableSuspects(); 
+                    this.LoadSuspects(); 
                     resolve(result);
                 },
                 (error) => {
@@ -191,7 +191,7 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         return new Promise((resolve, reject) => {
             $http.get(`api/setactivecontest.php?suspects=${this.SelectedSuspects.join(',')}`)
                 .then((result) => {
-                    this.LoadAvailableSuspects(); 
+                    this.LoadSuspects(); 
                     this.ContestMode = true;
                     resolve(result);
                 },
@@ -206,7 +206,7 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         return new Promise((resolve, reject) => {
             $http.get(`api/closeactivecontest.php`)
                 .then((result) => {
-                    this.LoadAvailableSuspects(); 
+                    this.LoadSuspects(); 
                     this.Winners = result.data;
                     console.log(this.Winners);
                     this.ContestMode = false;
@@ -219,22 +219,15 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });   
     };
-    this.LoadAvailableSuspects = () => {
-        $http.get(`api/getavailablesuspects.php`)
+    this.LoadSuspects = () => {
+        $http.get(`api/getsuspects.php`)
             .then((results) => {               
                if(!results.hasOwnProperty('data')){
                    console.log("Error in data");
                    return;
                }
                console.log(results.data);
-               this.AvailableSuspects = results.data;
-               let running = false;
-               for(let i = 0, len = this.AvailableSuspects.length; i < len; i++){
-                    if(this.AvailableSuspects[i].active){
-                        running = true;
-                    }
-               }
-               this.ContestMode = running;
+               this.Suspects = results.data;
             },
             (error) => {
                 //TODO: HANDLE ERROR
@@ -242,5 +235,5 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
             });
     };
 
-    this.LoadAvailableSuspects();
+    this.LoadSuspects();
 }]);

@@ -1,7 +1,11 @@
 let app = angular.module('VoterApp', []);
 app.controller('VoterController', ['$scope', '$http', function($scope, $http){
     this.VotedSuspect = null;
-    this.ActiveSuspects = [];
+    this.Detective = {
+        Name: "",
+        SuspectId: null
+    };
+    this.Suspects = [];
     this.Loaded = false;
     this.Pending = false;
     this.AlreadyVoted = false;
@@ -10,7 +14,9 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
      */
     this.onVoteClicked = ($event, suspect) => {
         $('.vote-modal').modal('show');
+        console.log(suspect);
         this.VotedSuspect = suspect;
+        this.Detective.SuspectId = suspect.id;
     };
     this.onVoteConfirmClicked = ($event) => {
         if(this.Pending){
@@ -21,7 +27,7 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
                 $('.vote-modal').modal('hide');
                 this.VotedSuspect = null;
                 this.AlreadyVoted = true;
-                localStorage.setItem('voted', stamp);
+                // localStorage.setItem('voted', stamp);
                 $scope.$apply();
             })
             .catch((error) => {
@@ -31,41 +37,36 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
     this.onVoteCancelClicked = ($event) => {
         $('.vote-modal').modal('hide');
         this.VotedSuspect = null;
+        this.ClearDetective();
     };
     /**
      * Class methods
      */
-    this.LoadActiveSuspects = () => {
-        $http.get('api/getsession.php')
-            .then((result) => {
-                if(localStorage.getItem('voted') == result.data){
-                    this.AlreadyVoted = true;
-                    this.Loaded = true;
-                }else{
-                    $http.get(`api/getavailablesuspects.php`)
-                        .then((results) => {               
-                            if(!results.hasOwnProperty('data')){
-                                console.log("Error in data");
-                                return;
-                            }
-                            console.log(results.data);
-                            this.ActiveSuspects = results.data;
-                            this.Loaded = true;
-                        },
-                        (error) => {
-                            //TODO: HANDLE ERROR
-                            console.log(error);
-                        });
+    this.ClearDetective = () => {
+        this.Detective.Name = "";
+        this.Detective.SuspectId = null;
+    };
+    this.LoadSuspects = () => {
+        $http.get(`api/getsuspects.php`)
+            .then((results) => {               
+                if(!results.hasOwnProperty('data')){
+                    console.log("Error in data");
+                    return;
                 }
-                console.log(result.data);
-            })
-       
+                console.log(results.data);
+                this.Suspects = results.data;
+                this.Loaded = true;
+            },
+            (error) => {
+                //TODO: HANDLE ERROR
+                console.log(error);
+            });
     };
 
     this.CastVote = () => {
         this.Pending = true;
         return new Promise((resolve, reject) => {
-            $http.get(`api/vote.php?couple_id=${this.VotedSuspect.id}`)
+            $http.get(`api/vote.php?name=${this.Detective.Name}&suspect_id=${this.Detective.SuspectId}`)
                 .then((result) => {
                     this.Pending = false;
                     ///localStorage.setItem('voted', stamp);
@@ -78,5 +79,5 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
         });
     };
 
-    this.LoadActiveSuspects();
+    this.LoadSuspects();
 }]);
