@@ -15,10 +15,10 @@
 			<h1>Rose City Swing Murder Mystery</h1>
     </header>
     <nav>
-      <ul>
-        <li ng-click="ctrl.onTabClicked('suspects')">Suspects</li>
-        <li ng-click="ctrl.onTabClicked('winners')">Winners</li>
-        <li ng-click="ctrl.onTabClicked('detectives')">Detectives</li>
+      <ul class="tab-list">
+        <li ng-click="ctrl.onTabClicked('suspects')" class="{{(ctrl.ActiveTab == 'suspects') ? 'active' : ''}}">Suspects</li>
+        <li ng-click="ctrl.onTabClicked('winners')" class="{{(ctrl.ActiveTab == 'winners') ? 'active' : ''}}">Winners</li>
+        <li ng-click="ctrl.onTabClicked('detectives')" class="{{(ctrl.ActiveTab == 'detectives') ? 'active' : ''}}">Detectives</li>
       </ul>
     </nav>
 		<section class="voter-container">

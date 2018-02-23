@@ -5,6 +5,19 @@
     .header{
         text-align: center;
     }
+    .tab-list{
+        width: 100%;
+        text-align: center;
+        margin: 1rem 0;
+        li{
+            display: inline-block;
+            padding: 1rem 3rem;
+            cursor: pointer;
+            &.active{
+                border-bottom: 2px solid #d58512;
+            }
+        }
+    }
     .suspect-list{
         text-align: center;
         min-width: 15rem;

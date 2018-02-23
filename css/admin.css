@@ -20,6 +20,16 @@ header {
   position: relative; }
   .admin-container .header {
     text-align: center; }
+  .admin-container .tab-list {
+    width: 100%;
+    text-align: center;
+    margin: 1rem 0; }
+    .admin-container .tab-list li {
+      display: inline-block;
+      padding: 1rem 3rem;
+      cursor: pointer; }
+      .admin-container .tab-list li.active {
+        border-bottom: 2px solid #d58512; }
   .admin-container .suspect-list {
     text-align: center;
     min-width: 15rem;
