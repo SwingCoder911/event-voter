@@ -3,7 +3,8 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
     this.VotedSuspect = null;
     this.Detective = {
         Name: "",
-        SuspectId: null
+        SuspectId: null,
+        Message: false
     };
     this.Suspects = [];
     this.Loaded = false;
@@ -22,22 +23,46 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
         if(this.Pending){
             return;
         }
-        this.CastVote()
-            .then((stamp) => {
-                $('.vote-modal').modal('hide');
-                this.VotedSuspect = null;
-                this.AlreadyVoted = true;
-                // localStorage.setItem('voted', stamp);
-                $scope.$apply();
+        this.CheckDetective()
+            .then((result) => {
+                this.CastVote()
+                    .then((stamp) => {
+                        $('.vote-modal').modal('hide');
+                        this.VotedSuspect = null;
+                        this.AlreadyVoted = true;
+                        $scope.$apply();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             })
             .catch((error) => {
-                console.log(error);
+                this.Detective.Message = error;
+                $scope.$apply();
             });
+        
     };
     this.onVoteCancelClicked = ($event) => {
         $('.vote-modal').modal('hide');
         this.VotedSuspect = null;
         this.ClearDetective();
+    };
+    this.CheckDetective = () => {
+        return new Promise((resolve, reject) => {
+            $http.get(`api/checkname.php?name=${this.Detective.Name}`)
+                .then((result) => {
+                    if(result.data === 'true'){
+                        resolve(true);
+                    }else{
+                        reject("We're sorry but you've already guessed! Thanks for playing!");
+                    }
+                },
+                (error) => {
+                    //TODO: HANDLE ERROR
+                    console.log(error);
+                    reject(error);
+                });
+        });
     };
     /**
      * Class methods
@@ -45,8 +70,10 @@ app.controller('VoterController', ['$scope', '$http', function($scope, $http){
     this.ClearDetective = () => {
         this.Detective.Name = "";
         this.Detective.SuspectId = null;
+        this.Detective.Message = false;
     };
     this.LoadSuspects = () => {
+        this.Loaded = false;
         $http.get(`api/getsuspects.php`)
             .then((results) => {               
                 if(!results.hasOwnProperty('data')){

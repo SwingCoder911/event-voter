@@ -49,7 +49,7 @@ class VoterDB{
 	}
 
 	public function getDetectives(){
-		$sql = "SELECT * FROM event_detectives;";
+		$sql = "SELECT event_detectives.*, event_suspects.name as guess FROM event_detectives inner join event_suspects on event_suspects.suspect_id = event_detectives.suspect_id;";
 		$suspects = array();
 		$result = $this->conn->query($sql);
 		if ($result->num_rows > 0) {
@@ -71,6 +71,11 @@ class VoterDB{
 		$sql = vsprintf($sql, array($suspect_id));
 		$result = $this->conn->query($sql);
 	}	
+	public function deleteDetective($detective_id){
+		$sql = "delete from event_detectives where detective_id=%d";
+		$sql = vsprintf($sql, array($detective_id));
+		$result = $this->conn->query($sql);
+	}	
 	
 	/**
 	 * Need to check here if updating culprit
@@ -78,6 +83,12 @@ class VoterDB{
 	public function updateSuspect($suspectId, $name, $isCulprit){
 		$sql = "update event_suspects set name='%s', is_culprit=%d where suspect_id=%d;";
 		$sql = vsprintf($sql, array($name, $isCulprit, $suspectId));
+		$result = $this->conn->query($sql);
+	}
+
+	public function updateDetective($detectiveId, $name){
+		$sql = "update event_suspects set name='%s' where detective_id=%d;";
+		$sql = vsprintf($sql, array($name, $detectiveId));
 		$result = $this->conn->query($sql);
 	}
 

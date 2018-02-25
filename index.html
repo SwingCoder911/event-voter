@@ -15,6 +15,7 @@
 			<h1>Rose City Swing Murder Mystery</h1>
 		</header>
 		<section >
+			<img src="images/loading.gif" ng-show="!ctrl.Loaded" class="loading" />
 			<ul class="suspect-list" ng-show="ctrl.Loaded && !ctrl.AlreadyVoted && ctrl.Suspects.length > 0">
                 <li class="suspect" ng-repeat="suspect in ctrl.Suspects">
 					<button class="btn btn-default suspect-action" ng-click="ctrl.onVoteClicked($event, suspect)">
@@ -37,6 +38,7 @@
 				<div class="modal-body">
 				<p>To guess <label ng-bind="ctrl.VotedSuspect.name"></label> please include your first and last name.</p>
 				<input class="form-control" ng-model="ctrl.Detective.Name" placeholder="Detective Name">
+				<p class="error" ng-show="ctrl.Detective.Message !== false" ng-bind="ctrl.Detective.Message"></p>
 				</div>
 				<div class="modal-footer">
 				<button type="button" class="btn btn-primary" ng-click="ctrl.onVoteConfirmClicked($event)">Cast Vote</button>

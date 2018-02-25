@@ -16,6 +16,12 @@ header {
 .modal .modal-title {
   float: left; }
 
+.loading {
+  display: block;
+  margin: 10rem auto 0 auto;
+  width: 10rem;
+  height: 10rem; }
+
 .voter-container {
   position: relative; }
   .voter-container .header {

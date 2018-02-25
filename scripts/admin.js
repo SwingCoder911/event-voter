@@ -4,7 +4,10 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
     this.Winners = [];
     this.Detectives = [];
     this.ContestMode = null;
+    this.CurrentSuspect = null;
+    this.CurrentDetective = null;
     this.ActiveTab = 'suspects';
+    this.Loading = false;
     this.SuspectForm = {
         Suspect: "",
         IsCulprit: null,
@@ -104,6 +107,26 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         $('.delete-modal').modal('hide');
         this.CurrentSuspect = null;
     };
+    this.onDeleteDetectiveClicked = ($event, id) => {
+        console.log("Deleting");
+        $event.stopPropagation();
+        $('.delete-modal.detective').modal('show');
+        this.CurrentDetective = id;
+    };
+    this.onDeleteDetectiveConfirmClicked = ($event, id) => {
+        $('.delete-modal.detective').modal('show');
+        this.DeleteDetective()
+            .then(() => {
+                $(".delete-modal.detective").modal('hide');
+            })
+            .catch(() => {
+                console.log("Something broke!");
+            });
+    };
+    this.onDeleteDetectiveCancelClicked = ($event, id) => {
+        $('.delete-modal.detective').modal('hide');
+        this.CurrentDetective = null;
+    };
     this.onStartClicked = ($event, suspect) => {
         $event.stopPropagation();
         if(this.SelectedSuspects.length < 2){
@@ -199,6 +222,20 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
                 });
         });   
     };
+    this.DeleteDetective = () => {
+        return new Promise((resolve, reject) => {
+            $http.get(`api/deletesuspect.php?suspect_id=${this.CurrentSuspect}`)
+                .then((result) => {
+                    this.LoadSuspects(); 
+                    resolve(result);
+                },
+                (error) => {
+                    //TODO: HANDLE ERROR
+                    console.log(error);
+                    reject(error);
+                });
+        });   
+    };
     this.StartContest = () => {
         return new Promise((resolve, reject) => {
             $http.get(`api/setactivecontest.php?suspects=${this.SelectedSuspects.join(',')}`)
@@ -232,48 +269,54 @@ app.controller('AdminController', ['$scope', '$http', function($scope, $http){
         });   
     };
     this.LoadSuspects = () => {
+        this.Loading = true;
         $http.get(`api/getsuspects.php`)
             .then((results) => {               
                if(!results.hasOwnProperty('data')){
                    console.log("Error in data");
                    return;
                }
-               console.log(results.data);
+               this.Loading = false;
                this.Suspects = results.data;
             },
             (error) => {
                 //TODO: HANDLE ERROR
+                this.Loading = false;
                 console.log(error);
             });
     };
     this.LoadDetectives = () => {
+        this.Loading = true;
         $http.get(`api/getdetectives.php`)
             .then((results) => {               
                if(!results.hasOwnProperty('data')){
                    console.log("Error in data");
                    return;
                }
-               console.log(results.data);
+               this.Loading = false;
                this.Detectives = results.data;
             },
             (error) => {
                 //TODO: HANDLE ERROR
                 console.log(error);
+                this.Loading = false;
             });
     };
     this.LoadWinners = () => {
+        this.Loading = true;
         $http.get(`api/getwinners.php`)
             .then((results) => {               
                if(!results.hasOwnProperty('data')){
                    console.log("Error in data");
                    return;
                }
-               console.log(results.data);
+               this.Loading = false;
                this.Winners = results.data;
             },
             (error) => {
                 //TODO: HANDLE ERROR
                 console.log(error);
+                this.Loading = false;
             });
     };
     this.LoadSuspects();
